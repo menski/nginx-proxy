@@ -111,6 +111,16 @@ server {
 		auth_basic_user_file	{{ (printf "/etc/nginx/htpasswd/%s" $host) }};
 		{{ end }}
 	}
+
+	{{ if (exists (printf "/etc/nginx/htpasswd/%s-exclude/" $host)) }}
+	{{ range $exclude := (dir (printf "/etc/nginx/htpasswd/%s-exclude/" $host)) }}
+	location /{{ replace $exclude "_" "/" -1 }}/ {
+		proxy_pass http://{{ $host }};
+		auth_basic off;
+	}
+	{{ end }}
+	{{ end }}
+
 }
 {{ else }}
 
@@ -124,6 +134,16 @@ server {
 		auth_basic_user_file	{{ (printf "/etc/nginx/htpasswd/%s" $host) }};
 		{{ end }}
 	}
+
+	{{ if (exists (printf "/etc/nginx/htpasswd/%s-exclude/" $host)) }}
+	{{ range $exclude := (dir (printf "/etc/nginx/htpasswd/%s-exclude/" $host)) }}
+	location /{{ replace $exclude "_" "/" -1 }}/ {
+		proxy_pass http://{{ $host }};
+		auth_basic off;
+	}
+	{{ end }}
+	{{ end }}
+
 }
 
 server {
